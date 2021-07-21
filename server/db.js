@@ -1,11 +1,19 @@
 import { Pool } from "pg";
 
-const dbUrl = process.env.DATABASE_URL || "postgres://localhost:5432/cyf";
+// const dbUrl = process.env.DATABASE_URL || "postgres://localhost:5432/cyf";
+
+// const pool = new Pool({
+// 	connectionString: dbUrl,
+// 	connectionTimeoutMillis: 5000,
+// 	ssl: dbUrl.includes("localhost") ? false : { rejectUnauthorized: false },
+// });
 
 const pool = new Pool({
-	connectionString: dbUrl,
-	connectionTimeoutMillis: 5000,
-	ssl: dbUrl.includes("localhost") ? false : { rejectUnauthorized: false },
+    user: "postgres",
+    password: 1234,
+    host: "localhost",
+    post: 5432,
+    database: "cyf_ecommerce",
 });
 
 export const connectDb = async () => {

@@ -41,7 +41,7 @@ export function Home() {
 					<h2>Messages: {statistics[0]}</h2>
 					<h2>Reactions: {statistics[1]}</h2>
 				</div>
-				<Link to="/about/this/site">About</Link>
+				<Link to="/channelList">Channel List Page</Link>
 			</div>
 		</main>
 	);
