@@ -6,11 +6,17 @@ const TableHead = () => {
   return (
     <tr>
       <th>
-        Channel
+        Channel Name
       </th>
+      {/* <th>
+        Channel Id
+      </th> */}
       <th>
         No. of users
       </th>
+      {/* <th>
+        Users
+      </th> */}
     </tr>
   );
 };

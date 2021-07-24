@@ -1,4 +1,4 @@
-//import channels from "../fakeData/channels.json";
+
 import { useState, useEffect } from "react";
 import { Table } from "reactstrap";
 import TableHead from "./TableHead";
@@ -19,15 +19,14 @@ const Channels = () => {
 				const sortedChannels = body.channels.sort(
 					(firstEl, secondEl) => secondEl.num_members - firstEl.num_members
 				);
-				console.log(sortedChannels);
+
 				setChannelList(sortedChannels);
-				console.log(body);
 			})
 			.catch((err) => {
 				console.error(err);
 			});
 	}, []);
-	console.log(channelList);
+
 	return (
 		<main role="main">
 			<div className="container">
