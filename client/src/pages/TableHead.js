@@ -1,7 +1,7 @@
 import React from "react";
 import "./Home.css";
 
-const TableHead = (props) => {
+const TableHead = () => {
 
   return (
     <tr>
@@ -9,13 +9,7 @@ const TableHead = (props) => {
         Channel
       </th>
       <th>
-        Description
-      </th>
-      <th>
         No. of users
-      </th>
-      <th>
-        Users
       </th>
     </tr>
   );

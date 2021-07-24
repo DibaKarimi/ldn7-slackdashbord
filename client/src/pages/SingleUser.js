@@ -13,7 +13,7 @@ const SingleUser = () => {
 	// get userId from url. e.g. /user/abc123
 	const { userId } = useParams();
 	useEffect(() => {
-		fetch(`/api/user/${userId}?time=week`)
+		fetch(`/api/user/${userId}`)
 			.then((res) => {
 				if (!res.ok) {
 					throw new Error(res.statusText);
