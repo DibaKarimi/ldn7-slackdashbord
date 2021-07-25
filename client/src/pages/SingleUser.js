@@ -10,7 +10,7 @@ const SingleUser = () => {
 	const [stats, setStats] = useState("?");
 	const [profile, setProfile] = useState("Happy Coder");
 	const { userId, channelId } = useParams();
-
+	console.log(userId);
 	useEffect(() => {
 		fetch(`/api/user/${channelId}/${userId}`)
 			.then((res) => {
@@ -29,8 +29,9 @@ const SingleUser = () => {
 				setProfile("Not found");
 				console.error(err);
 			});
-	}, [userId]);
+	}, [userId,channelId]);
 
+	console.log(profile);
 
 	return (
 		<main role="main">
@@ -52,9 +53,7 @@ const SingleUser = () => {
 								<div>Number of reactions: {message.reactionCount}</div>
 							</div>
 						))}
-						<div>
-							Profile: {profile}
-						</div>
+						<div>Profile: {profile}</div>
 					</div>
 				</div>
 			</div>

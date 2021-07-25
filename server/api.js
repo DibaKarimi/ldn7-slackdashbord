@@ -56,20 +56,6 @@ const getChannelHistory = async (channel, oldest, latest) => {
 	return res.data;
 };
 
-const getChannelList = async () => {
-    const slackToken = process.env.SLACK_API_TOKEN;
-    const url = "https://ldn7-test-workspace.slack.com/api/conversations.list";
-    const res = await axios.get(url, {
-        headers: { Authorization: `Bearer ${slackToken}` },
-    });
-    return res.data;
-};
-
-router.get("/channelList", async (req, res) => {
-    const fetchChannelList  = await getChannelList();
-    res.status(200).json(fetchChannelList);
-});
-
 const findReaction = (reactions, userId) => {
 	return reactions.filter((reaction) => reaction.users.includes(userId));
 };
@@ -122,7 +108,7 @@ router.get("/user/:channelId/:userId", async (req, res) => {
 	let result = {
 		userName: "",
 		profile: "",
-		statistics: []
+		statistics: [],
 	};
 	const userInfo = await getUserInfo(userId);
 	const userName = userInfo.ok
