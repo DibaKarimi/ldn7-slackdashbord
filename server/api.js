@@ -15,6 +15,8 @@ const getChannelList = async () => {
 	return res.data;
 };
 
+
+
 const getChannelUser = async (channelId) => {
 	const slackToken = process.env.SLACK_API_TOKEN;
 	const url = `${slackWorkspace}/api/conversations.members?channel=${channelId}`;
@@ -89,10 +91,43 @@ router.get("/userList", async (req, res) => {
 	res.status(200).json(fetchUserList);
 });
 
+
+const downloadDailyStat = async (startDate,endDate) => {
+	let data = await getChannelList();
+	const stat = data.channels.map(async (channel) => {
+			const result = await getDataFromChannel(channel.id,startDate,endDate);
+			return result;
+		});
+	return Promise.all(stat);
+};
+const getDataFromChannel = async (channelId,startDate,endDate) => {
+	let date = new Date(startDate * 1000).toLocaleDateString();
+	const data = await getChannelUser(channelId);
+	const statistics = data.members.map(async (member) => {
+		const result = await getStat(channelId, member, startDate, endDate);
+		return { channelId, member,date, ...result };
+	});
+	return Promise.all(statistics);
+};
+
+router.get("/dailyStatistic", async (req, res) => {
+	let startDate = new Date().setHours(0, 0, 0, 0);
+	let duration=60*60*24*1000;
+	let endDate = new Date().setHours(0, 0, 0, 0) / 1000;
+		let result=[];
+	for (let i=1;i<22;i++){
+		endDate = startDate / 1000;
+        startDate = (startDate - duration * i) / 1000;
+	result.push(await downloadDailyStat(startDate,endDate));
+
+}
+	res.json(result);
+});
+
 router.get("/channelUser/:channelId", async (req, res) => {
 	const channelId = req.params.channelId;
 	const fetchChannelUser = await getChannelUser(channelId);
-	const output = Promise.all(
+ Promise.all(
 		fetchChannelUser.members.map(async (member) => {
 			const userInfo = await getUserInfo(member);
 			return userInfo.user;
@@ -140,7 +175,7 @@ router.get("/avr/:channelId/:userId", async (req, res) => {
 		const now = new Date();
 		const joinDate = timestampOfJoin.ts * 1000;
 		const weeks = Math.round((now - joinDate) / 604800000);
-		let stat = await getStat(userId, timestampOfJoin.ts);
+		let stat = await getStat(channelId,userId, timestampOfJoin.ts);
 		stat.messageCount = stat.messageCount / weeks;
 		stat.reactionCount = stat.reactionCount / weeks;
 		res.json(stat);
