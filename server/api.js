@@ -19,7 +19,7 @@ const getChannelList = async () => {
 	return res.data;
 };
 
-
+/////////////////////////////////////
 
 const getRepliesMessage= async(channelId, timeStamp)=>{
 	const slackToken = process.env.SLACK_API_TOKEN;
