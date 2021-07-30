@@ -1,5 +1,9 @@
+
 import { Router } from "express";
 import process from "process";
+import pool from "./db";
+import "dotenv/config";
+import format from "pg-format";
 
 const router = new Router();
 const axios = require("axios");
@@ -15,7 +19,14 @@ const getChannelList = async () => {
 	return res.data;
 };
 
-
+const getRepliesMessage= async(channelId, timeStamp)=>{
+	const slackToken = process.env.SLACK_API_TOKEN;
+	const url = `${slackWorkspace}/api/conversations.replies?channel=${channelId}&ts=${timeStamp}`;
+	const res = await axios.get(url, {
+		headers: { Authorization: `Bearer ${slackToken}` },
+	});
+	return res.data;
+};
 
 const getChannelUser = async (channelId) => {
 	const slackToken = process.env.SLACK_API_TOKEN;
@@ -92,37 +103,173 @@ router.get("/userList", async (req, res) => {
 });
 
 
-const downloadDailyStat = async (startDate,endDate) => {
-	let data = await getChannelList();
-	const stat = data.channels.map(async (channel) => {
-			const result = await getDataFromChannel(channel.id,startDate,endDate);
-			return result;
+const fetchAllData = async (startDate) => {
+	const channelList = await getChannelList();
+	const result = channelList.channels.map(async (channel) => {
+		const channelId = channel.id;
+		const data = await getChannelHistory(channel.id, startDate, " ");
+		const extractedData = data.messages.map((message) => {
+			const userId = message.user;
+			const type = message.type;
+			const date = message.ts;
+			const day = new Date(date * 1000).toLocaleDateString();
+			const threadDate = message.thread_ts ? message.thread_ts : false;
+			const reaction = (message.reactions) ? message.reactions : false;
+			const replyUsers= (message.reply_users)? message.reply_users : false;
+			return { channelId, userId, type, date, day, threadDate, reaction , replyUsers };
 		});
-	return Promise.all(stat);
-};
-const getDataFromChannel = async (channelId,startDate,endDate) => {
-	let date = new Date(startDate * 1000).toLocaleDateString();
-	const data = await getChannelUser(channelId);
-	const statistics = data.members.map(async (member) => {
-		const result = await getStat(channelId, member, startDate, endDate);
-		return { channelId, member,date, ...result };
+		return [...extractedData];
 	});
-	return Promise.all(statistics);
+	return Promise.all(result);
 };
 
-router.get("/dailyStatistic", async (req, res) => {
-	let startDate = new Date().setHours(0, 0, 0, 0);
-	let duration=60*60*24*1000;
-	let endDate = new Date().setHours(0, 0, 0, 0) / 1000;
-		let result=[];
-	for (let i=1;i<22;i++){
-		endDate = startDate / 1000;
-        startDate = (startDate - duration * i) / 1000;
-	result.push(await downloadDailyStat(startDate,endDate));
+router.get("/dailyStatistic/:channelId/:userId", async (req, res) => {
+	let startDate =
+		(new Date().setHours(0, 0, 0, 0) - 60 * 60 * 24 * 21 * 1000) / 1000;
+	const messageInfo = await fetchAllData(startDate); // All Data/messages for 3 weeks (unsorted)
+	const reactionData = FetchReactionData(messageInfo); // reactions (unsorted)
+	messageInfo.push(reactionData); // messages + reaction (unsorted)
+	const info = [].concat.apply([], messageInfo); // messages + reaction (sorted)
+	const repliesMessages = await fetchRepliesData(info); // messages in thread (unsorted)
+	const repliesMessagesSorted = [].concat.apply([], repliesMessages); // messages in thread (sorted)
+	const repliesReaction = fetchRepliesReaction(repliesMessagesSorted); // reactions  in thread (sorted)
+	messageInfo.push(repliesMessagesSorted);
+	messageInfo.push(repliesReaction);
+	const result = [].concat.apply([], messageInfo); // messages + reactions + repliesMessages + repliesReactions
+	const aggregateStat = await aggregateData(result);
+	const stat = [].concat.apply([], [].concat.apply([], aggregateStat));
+	insertDataToTable(stat);
+	res.json(stat);
 
-}
-	res.json(result);
 });
+
+
+const insertDataToTable = (newStat) => {
+
+	pool
+		.query("delete from messages")
+		.then(() => console.log("Delete all messages"))
+		.catch((e) => console.error(e));
+
+	pool
+		.query(
+			format(
+				"INSERT INTO messages (user_id, channel_id, date, message_count, reaction_count) VALUES %L",
+				newStat
+			)
+		)
+		.then(() => console.log("New message created!"))
+		.catch((e) => console.error(e));
+};
+
+
+const aggregateData=async (result)=>{
+	const channelList = await getChannelList();
+	const aggregateStat = channelList.channels.map(async (channel) => {
+		const UsersInfo=await getChannelUser(channel.id);
+		const data=UsersInfo.members.map((user)=>{
+			const allDayStat=[];
+			for(let dayDate=1;dayDate<21;dayDate++){
+				allDayStat.push (calculateDailyStat(result, channel.id, user, dayDate));
+			}
+			return allDayStat;
+		});
+		return [...data];
+	});
+	return	Promise.all(aggregateStat);
+};
+
+const calculateDailyStat = (info, channelId, userId, dayDate) => {
+	const start = new Date().setHours(0, 0, 0, 0);
+	const duration = 60 * 60 * 24 * 1000;
+	const endDate = (start - duration * (dayDate - 1)) / 1000;
+	const startDate = (start - duration * dayDate) / 1000;
+	const day = new Date(startDate * 1000).toISOString().split("T")[0];
+	const dailyMessage = info.filter((message) => {
+		return (
+			message.date < endDate &&
+			message.date > startDate &&
+			message.channelId == channelId &&
+			message.userId == userId &&
+			message.type == "message"
+		);
+	});
+	const dailyReaction = info.filter((message) => {
+		return (
+			message.date < endDate &&
+			message.date > startDate &&
+			message.channelId == channelId &&
+			message.userId == userId &&
+			message.type == "reaction"
+		);
+	});
+	const messageCount=dailyMessage.length;
+	const reactionCount=dailyReaction.length;
+	return  [channelId, userId,day, messageCount ,reactionCount] ;
+};
+
+const fetchRepliesReaction=(data)=>{
+	const filteredData= data.filter((message)=> message.reactions);
+	const type= "reaction";
+	const result=[];
+	filteredData.map((message) => {
+		const channelId = message.channelId;
+		const date = message.date;
+		const day = message.day;
+		message.reactions.map((users) => {
+			users.users.map((userId) => {
+			result.push	({ channelId, userId, type, date, day });
+			});
+		});
+	});
+	return result;
+};
+
+
+
+const fetchRepliesData= (messageInfo)=>{
+    const filterData=messageInfo.filter((message)=> message.replyUsers);
+	const totalData=filterData.map(async(message)=>{
+				const repliesData = await getRepliesMessage(message.channelId, message.date);
+				repliesData.messages.shift();
+				const channelId= message.channelId;
+				const resultTotal = repliesData.messages.map((reply) => {
+					const userId = reply.user;
+					const type = reply.type;
+					const date = reply.ts;
+					const day = new Date(date * 1000).toLocaleDateString();
+					const threadDate= false;
+					const replyUsers=false;
+					const reactions = reply.reactions ? reply.reactions : false;
+					return { channelId, userId, type, date, day, threadDate , reactions , replyUsers };
+				});
+				return [...resultTotal];
+		});
+	return Promise.all(totalData);
+};
+
+
+const FetchReactionData = (messageInfo) => {
+	const result = [];
+	const type = "reaction";
+	messageInfo.map((message) => {
+		message.map((ele) => {
+			const channelId = ele.channelId;
+			const date = ele.date;
+			const day = new Date(date * 1000).toLocaleDateString();
+			if (ele.reaction) {
+				ele.reaction.map((users) => {
+					users.users.map((userId) => {
+						result.push({ channelId, userId, type, date, day });
+					});
+				});
+			}
+		});
+	});
+
+	return result;
+};
+
 
 router.get("/channelUser/:channelId", async (req, res) => {
 	const channelId = req.params.channelId;
@@ -157,6 +304,7 @@ router.get("/user/:channelId/:userId", async (req, res) => {
 	result.statistics.push(newStatistics);
 	res.status(200).json(result);
 });
+
 
 router.get("/avr/:channelId/:userId", async (req, res) => {
 	const userId = req.params.userId;
