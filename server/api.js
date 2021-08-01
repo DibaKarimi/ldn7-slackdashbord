@@ -124,7 +124,7 @@ const fetchAllData = async (startDate) => {
 	return Promise.all(result);
 };
 
-router.get("/dailyStatistic/:channelId/:userId", async (req, res) => {
+router.get("/dailyStatistic", async (req, res) => {
 	let startDate =
 		(new Date().setHours(0, 0, 0, 0) - 60 * 60 * 24 * 21 * 1000) / 1000;
 	const messageInfo = await fetchAllData(startDate); // All Data/messages for 3 weeks (unsorted)
@@ -155,7 +155,7 @@ const insertDataToTable = (newStat) => {
 	pool
 		.query(
 			format(
-				"INSERT INTO messages (user_id, channel_id, date, message_count, reaction_count) VALUES %L",
+				"INSERT INTO messages (channel_id, user_id, date, message_count, reaction_count) VALUES %L",
 				newStat
 			)
 		)
@@ -271,6 +271,36 @@ const FetchReactionData = (messageInfo) => {
 	return result;
 };
 
+router.get("/channelAvg/:channelId", (req, res) => {
+	const channelId = req.params.channelId;
+	console.log(channelId);
+
+	const query = `SELECT channel_id, AVG(message_count)::numeric(10,1) AS avg_message, AVG(reaction_count)::numeric(10,1) AS avg_reaction FROM messages WHERE date > current_date - interval '7 days' AND channel_id = '${channelId}' GROUP BY channel_id ORDER by channel_id`;
+	console.log(query);
+
+	pool.query(query, (db_err, db_res) => {
+		if (db_err) {
+			res.send(JSON.stringify(db_err));
+		} else {
+			console.log(db_res.rows);
+			res.json(db_res.rows);
+		}
+	});
+
+});
+
+router.get("/userSum/:channelId/:userId", (req, res) => {
+	const channelId = req.params.channelId;
+	const userId = req.params.userId;
+	const query = `SELECT channel_id, user_id, SUM(message_count) AS total_message, SUM(reaction_count) AS total_reaction FROM messages WHERE date > current_date - interval '7 days' AND channel_id = '${channelId}' AND user_id = '${userId}'  GROUP BY user_id, channel_id ORDER by channel_id`;
+	pool.query(query, (db_err, db_res) => {
+		if (db_err) {
+			res.send(JSON.stringify(db_err));
+		} else {
+			res.json(db_res.rows);
+		}
+	});
+});
 
 router.get("/channelUser/:channelId", async (req, res) => {
 	const channelId = req.params.channelId;
