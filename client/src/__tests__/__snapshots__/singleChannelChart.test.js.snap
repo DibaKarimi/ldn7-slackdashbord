@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SingleChannelChart should render chart for a single channel correctly 1`] = `
+<div
+  className="chart"
+>
+  <ForwardRef
+    data={
+      Object {
+        "datasets": Array [
+          Object {
+            "backgroundColor": "#ffa600",
+            "borderColor": "#003f5c",
+            "borderWidth": 1,
+            "data": undefined,
+            "hoverBackgroundColor": "#ff7c43",
+            "hoverBorderColor": "#003f5c",
+            "label": "Messages",
+          },
+          Object {
+            "backgroundColor": "#ff6361",
+            "borderColor": "#003f5c",
+            "borderWidth": 1,
+            "data": undefined,
+            "hoverBackgroundColor": "#d45087",
+            "hoverBorderColor": "#003f5c",
+            "label": "Reactions",
+          },
+        ],
+        "labels": Array [
+          "Current Week",
+          "Previous Week",
+        ],
+      }
+    }
+    options={
+      Object {
+        "legend": Object {
+          "display": false,
+        },
+        "responsive": true,
+        "type": "bar",
+      }
+    }
+  />
+</div>
+`;

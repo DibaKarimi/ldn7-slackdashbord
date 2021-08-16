@@ -91,3 +91,26 @@ createdb -U <username> cyf
 psql -d cyf -U <username> -f scripts/01-init.sql
 
 ```
+
+### Font
+
+1. Run on your terminal: npm install --save file-loader
+2. Run npm i typeface-varela-round
+3. Run npm install webfontloader --save
+4. Add to the App.js: import WebFont from "webfontloader";
+   WebFont.load({google: {families: ["Varela Round: 400"]}});
+
+### Testing
+
+So far we are using some simple [snapshot tests](https://jestjs.io/docs/snapshot-testing) using Jest.
+To run the tests -all tests located under the **tests** folder, run:
+
+```
+npm run test
+```
+
+The snapshot tests will warn developers if they make unintentional changes to the components or pages. If you have made intentional changes to a component, run the following to update the snapshots:
+
+```
+jest --updateSnapshots
+```

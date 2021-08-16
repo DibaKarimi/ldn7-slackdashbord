@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SingleUserChart should render chart for a single user correctly 1`] = `
+<div
+  className="chart"
+>
+  <ForwardRef
+    data={
+      Object {
+        "datasets": Array [
+          Object {
+            "backgroundColor": "green",
+            "borderColor": "green",
+            "borderWidth": 1,
+            "data": undefined,
+            "hoverBackgroundColor": "lightGreen",
+            "hoverBorderColor": "lightGreen",
+            "label": "Messages",
+          },
+          Object {
+            "backgroundColor": "orange",
+            "borderColor": "orange",
+            "borderWidth": 1,
+            "data": undefined,
+            "hoverBackgroundColor": "rgba(255,99,132,0.4)",
+            "hoverBorderColor": "rgba(255,99,132,1)",
+            "label": "Reactions",
+          },
+        ],
+        "labels": undefined,
+      }
+    }
+    options={
+      Object {
+        "legend": Object {
+          "display": false,
+        },
+        "responsive": true,
+        "type": "bar",
+      }
+    }
+  />
+</div>
+`;

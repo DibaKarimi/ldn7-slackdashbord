@@ -17,6 +17,7 @@
 		"serve": "npm start",
 		"start": "node dist/server.js",
 		"test": "jest",
+		"snapshot:update": "jest --updateSnapshot",
 		"lint:eslint": "eslint .",
 		"lint:fix": "npm run lint:eslint -- --fix && npm run lint:prettier -- --write",
 		"lint:prettier": "prettier ."
@@ -103,7 +104,9 @@
 		"reactstrap": "^8.9.0",
 		"redux": "^4.1.1",
 		"redux-logger": "^3.0.6",
-		"redux-thunk": "^2.3.0"
+		"redux-thunk": "^2.3.0",
+		"typeface-varela-round": "^1.1.13",
+		"webfontloader": "^1.6.28"
 	},
 	"engines": {
 		"node": ">=12.0",
