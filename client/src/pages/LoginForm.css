@@ -1,4 +1,4 @@
-form[name="loginForm"] {
+/* form[name="loginForm"] {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -28,8 +28,8 @@ label {
 	font-weight: bold;
 	font-size: 20px;
 	height: 50px;
-}
-.span-text {
+} */
+/* .span-text {
 	height: 50px;
 	font-size: 15px;
 	background-color: #f0f5ee;
@@ -44,8 +44,8 @@ label {
 	white-space: nowrap;
 	border: 1px solid #ced4da;
 	border-radius: 0.25rem;
-}
-input[type="text"],
+} */
+/* input[type="text"],
 input[type="password"] {
 	box-sizing: border-box;
 	height: 50px;
@@ -53,20 +53,18 @@ input[type="password"] {
 	flex-grow: 1;
 	font-size: 15px;
 	width: 200px;
-}
+} */
 
 button[type="submit"] {
-	color: #eef0ee;
-	width: 200px;
 	height: 50px;
-	border: 2px solid #0a5503;
+	/* border: 2px solid #0a5503;
 	border-radius: 5px;
-	font-size: 20px;
+	font-size: 20px; */
 }
 
-.message {
+/* .message {
 	font-size: 20px;
 	margin-top: 10px;
 	color: red;
 	margin-bottom: 9px;
-}
+} */

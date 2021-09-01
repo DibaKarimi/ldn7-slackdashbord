@@ -24,6 +24,7 @@ const Logout = () => {
 				name: "",
 				loggedIn: false,
 				message: "you are logout",
+				userId: "",
 			})
 		);
 	};

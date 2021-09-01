@@ -9,9 +9,9 @@ import NavBar from "./components/NavBar";
 
 ReactDOM.render(
 	<div>
-		<NavBar />
 		<BrowserRouter>
 			<Provider store={store}>
+				<NavBar />
 				<App />
 			</Provider>
 		</BrowserRouter>

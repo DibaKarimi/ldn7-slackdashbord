@@ -3,6 +3,7 @@ import process from "process";
 import pool from "./db";
 import "dotenv/config";
 import format from "pg-format";
+import bcrypt from "bcrypt";
 
 const router = new Router();
 const axios = require("axios");
@@ -12,6 +13,7 @@ const slackWorkspace = "https://ldn7-test-workspace.slack.com";
 const users = [];
 const loginRequired = (req, res, next) => {
 	if (!req.session.userId) {
+		console.log("session", req.session.userId);
 		return res.status(403).json({ message: " you should login first" });
 	}
 	const user = users.includes(req.session.userId);
@@ -21,13 +23,36 @@ const loginRequired = (req, res, next) => {
 };
 
 router.post("/login", (req, res) => {
-	const { name = "", password = "" } = req.body;
+	const { email = "", password = "" } = req.body;
 	//const user = users.find((user) => user.password === password);
-	const isLogin = password === process.env.LOGIN_PASS;
-	if (!isLogin) return res.status(401).json({ message: "user not allowed" });
-	req.session.userId = name;
-	users.push(name);
-	res.json({ token: true });
+	if (!(email && password)) {
+		return res.status(400).send({ error: "Data not formatted properly" });
+	}
+	//const isLogin = password === process.env.LOGIN_PASS;
+	const query = `select * from users where email='${email}'`;
+	pool.query(query, async (db_err, db_res) => {
+		if (db_err) {
+			res.send(JSON.stringify(db_err));
+		} else {
+			if (db_res.rows.length == 0) {
+				res.json({ message: "This user is not exists" });
+			} else {
+				const hash = db_res.rows[0].password;
+				const resultCompare = await bcrypt.compare(password, hash);
+				if (resultCompare) {
+					req.session.userId = email;
+					users.push(email);
+					res.json({
+						name: db_res.rows[0].user_name,
+						userId: db_res.rows[0].user_id,
+						role: db_res.rows[0].role,
+					});
+				} else if (!resultCompare) {
+					res.json({ message: "user not allowed" });
+				}
+			}
+		}
+	});
 });
 
 router.get("/profile", loginRequired, (req, res) => {
@@ -36,6 +61,62 @@ router.get("/profile", loginRequired, (req, res) => {
 router.post("/logout", loginRequired, (req, res) => {
 	req.session.userId = null;
 	res.json({ message: "logout" });
+});
+
+router.post("/signUp", async (req, res) => {
+	const { name = "", userId = "", email = "", password = "" } = req.body;
+	console.log("name", name, "userId:", userId, password, email);
+	if (!(name && password && email && userId)) {
+		return res.status(400).send({ error: "Data not formatted properly" });
+	}
+	const salt = await bcrypt.genSalt(10);
+	const hashPassword = await bcrypt.hash(password, salt);
+	if (userId !== "mentor") {
+		const query = `select * from users where user_id='${userId}' or email='${email}'`;
+		pool.query(query, (db_err, db_res) => {
+			if (db_err) {
+				res.send(JSON.stringify(db_err));
+			} else {
+				if (db_res.rows.length !== 0) {
+					res.json({ message: "This user already exists" });
+				} else {
+					const query = `INSERT INTO users  VALUES ('${userId}','${name}', '1'  , '${hashPassword}' , '${email}')`;
+					pool.query(query, (db_err, db_res) => {
+						if (db_err) {
+							res.send(JSON.stringify(db_err));
+						} else {
+							req.session.userId = name;
+							users.push(name);
+							res.json({ message: "Done" });
+						}
+					});
+				}
+			}
+		});
+	} else {
+		const query = `select * from users where email='${email}'`;
+		pool.query(query, (db_err, db_res) => {
+			if (db_err) {
+				res.send(JSON.stringify(db_err));
+			} else {
+				if (db_res.rows.length !== 0) {
+					res.json({ message: "This mentor already exists" });
+				} else {
+					const query = `INSERT INTO users  VALUES ('mentor','${name}', '2'  , '${hashPassword}' , '${email}')`;
+					pool.query(query, (db_err, db_res) => {
+						if (db_err) {
+							res.send(JSON.stringify(db_err));
+						} else {
+							req.session.userId = name;
+							users.push(name);
+							console.log("session", req.session.userId, "name", users);
+							res.json({ message: "Done" });
+						}
+					});
+				}
+			}
+		});
+	}
 });
 
 const getChannelList = async () => {
@@ -159,7 +240,7 @@ const fetchAllData = async (startDate) => {
 	return Promise.all(result);
 };
 
-router.post("/dailyStatistic", loginRequired, async (req, res) => {
+router.post(`"/dailyStatistic"`, loginRequired, async (req, res) => {
 	const startDateString = req.query.date || new Date();
 	const numberOfDays = req.query.days || 1;
 	let startDate =

@@ -2,10 +2,17 @@ import React, { useState } from "react";
 import arrow from "../images/arrow.png";
 import "../pages/Home.css";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { login, selectUser } from "../features/userSlice";
 
 const TableRow = ({ channel }) => {
 	const [selectedRow, setSelectedRow] = useState(false);
-
+	const user = useSelector(selectUser);
+	const role = user.userId;
+	const path =
+		role == "mentor"
+			? `/channel/${channel.name}/${channel.id}`
+			: `/user/${channel.id}/${role}/${user.name}`;
 	function rowSelected() {
 		setSelectedRow(!selectedRow);
 	}
@@ -19,7 +26,7 @@ const TableRow = ({ channel }) => {
 						color: "black",
 						fontWeight: "lighter",
 					}}
-					to={`/channel/${channel.name}/${channel.id}`}
+					to={path}
 				>
 					{channel.name}
 				</Link>
@@ -31,7 +38,7 @@ const TableRow = ({ channel }) => {
 						color: "black",
 						fontWeight: "lighter",
 					}}
-					to={`/channel/${channel.name}/${channel.id}`}
+					to={path}
 				>
 					{channel.num_members}
 				</Link>
@@ -43,7 +50,7 @@ const TableRow = ({ channel }) => {
 						color: "black",
 						fontWeight: "lighter",
 					}}
-					to={`/channel/${channel.name}/${channel.id}`}
+					to={path}
 				>
 					{<img className="arrow" src={arrow} alt="arrow" />}
 				</Link>
