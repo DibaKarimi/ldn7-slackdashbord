@@ -53,21 +53,7 @@ const NavBar = ({ setToken }) => {
 				<Collapse isOpen={!collapsed} navbar className="collapsedItems">
 					<Nav navbar>
 						<NavItem>
-							<NavLink href="/login">Login</NavLink>
-						</NavItem>
-						<NavItem
-							onClick={() => {
-								setToken("logout");
-							}}
-						>
-							<NavLink
-								href="/logout"
-								onClick={() => {
-									setToken("logout");
-								}}
-							>
-								Logout
-							</NavLink>
+							<NavLink href="https://codeyourfuture.io/">More</NavLink>
 						</NavItem>
 						<NavItem>
 							<NavLink href="https://codeyourfuture.io/about/">Contact</NavLink>

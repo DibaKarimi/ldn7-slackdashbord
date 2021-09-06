@@ -3,15 +3,12 @@ import { useState } from "react";
 import Home from "./pages/Home";
 import SingleUser from "./pages/SingleUser";
 import Channels from "./pages/Channels";
+import Cohorts from "./pages/Cohorts";
 import Channel from "../src/pages/Channel";
 import Login from "./pages/Login";
-import Logout from "./pages/Logout";
+import Logout from "./components/Logout";
 import SignUp from "./pages/SignUp";
-//import "bootstrap/dist/css/bootstrap.min.css";
-//import useToken from "./pages/useToken";
-
 const App = () => {
-	//const { token, setToken } = useToken();
 	const [token, setToken] = useState(false);
 	console.log(token);
 	if (!token) return <Home setToken={setToken} />;
@@ -33,14 +30,20 @@ const App = () => {
 			<Route path="/channels/:userId">
 				<Channels setToken={setToken} />
 			</Route>
+			<Route path="/cohorts">
+				<Cohorts setToken={setToken} />
+			</Route>
 			<Route path="/channel/:name/:channelId">
 				<Channel setToken={setToken} />
 			</Route>
 			<Route path="/login/:role">
-				<Login setToken={setToken} />
+				<Login />
 			</Route>
 			<Route path="/logout">
-				<Logout />
+				<Logout setToken={setToken} />
+			</Route>
+			<Route path="/signUp/:role">
+				<SignUp></SignUp>
 			</Route>
 			<Route path="/signUp/:role">
 				<SignUp></SignUp>

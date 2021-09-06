@@ -2,12 +2,13 @@ import { Button } from "reactstrap";
 
 const ChannelButton = ({ setToken }) => {
 	return (
-		<div className="text-center">
+		<div>
 			<Button
-				className="linkButtons blueButton"
+				className="getStartedButton"
 				onClick={() => {
 					setToken("Home");
-					history.push("/channels");
+					// throwing errors in console:
+					// history.push("/channels");
 				}}
 			>
 				Get started

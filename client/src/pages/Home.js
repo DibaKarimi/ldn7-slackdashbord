@@ -1,5 +1,5 @@
-import ChannelButton from "../components/Button";
-import Footer from "../components/Footer";
+// import ChannelButton from "../components/Button";
+import HomeUserButtons from "../components/HomeUserButtons";
 import "./Home.css";
 import PropTypes from "prop-types";
 import Card from "../components/Card";
@@ -17,22 +17,21 @@ const Home = ({ setToken }) => {
 	};
 	const classes = useStyles();
 	return (
-		<main>
+		<div className="homePageContainer">
 			<div className="introMessage">
-				<h3>Hi there, welcome to CYF Slacktastic dashboard!</h3>
-				<h4>
+				<h1>Hi there, welcome to CYF Slacktastic dashboard!</h1>
+				<h2>
 					This site allows you to access all sorts of stats about the Code Your
 					Future slack channels and users.
-				</h4>
+				</h2>
 			</div>
-			<ChannelButton setToken={setToken} />
-			<div className="container d-flex justify-content-around mt-5">
-				<Card content="Admin" setToken={setToken} />
-				<Card content="Mentor" setToken={setToken} />
-				<Card content="Trainee" setToken={setToken} />
+			{/* <ChannelButton setToken={setToken} /> */}
+			<div className="buttonsContainer">
+				<HomeUserButtons content="Admin" setToken={setToken} />
+				<HomeUserButtons content="Mentor" setToken={setToken} />
+				<HomeUserButtons content="Trainee" setToken={setToken} />
 			</div>
-			<Footer />
-		</main>
+		</div>
 	);
 };
 export default Home;

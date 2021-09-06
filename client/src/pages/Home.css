@@ -1,4 +1,4 @@
-/* ALL FRONT END */
+@import url("https://fonts.googleapis.com/css?family=Varela+Round");
 
 * {
 	font-family: "Varela Round", serif;
@@ -6,111 +6,134 @@
 }
 
 body {
-	min-height: 200px;
-	margin-bottom: 50px;
-	clear: both;
+	/* min-height: 200px; */
+	/* width: 100%; */
+	/* height: 100%; */
+	margin: 0;
 }
 
 /* NAVBAR */
-
-.navbar {
-	width: 100%;
-	padding: 10px;
-	margin-bottom: 40px;
-	right: 0;
-	left: 0;
-}
-
-.nav-item {
-	text-align: center;
-}
 
 .cyf_logo {
 	width: 200px;
 	height: auto;
 }
 
+.MuiTypography-body1 {
+	font-family: "Varela Round", serif;
+}
+
 /* HOME PAGE */
 
-.introMessage {
-	width: 80%;
-	border-radius: 10px;
-	border: solid 3px #eef0ee;
-	border-radius: 40px;
-	margin: 100px auto 30px auto;
-	padding: 50px;
+.homePageContainer {
 	display: flex;
 	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	margin: 5px;
+}
+
+.introMessage {
+	width: 85%;
+	border: solid 3px #eef0ee;
+	border-radius: 40px;
+	margin: 10px auto;
+	padding: 35px 20px;
 	text-align: center;
 }
 
-.introMessage h3 {
-	font-weight: 1000;
+.introMessage h1 {
+	font-size: 17px;
 	margin-bottom: 30px;
 }
-.introMessage h4 {
+
+.introMessage h2 {
 	font-weight: lighter;
+	font-size: 12px;
 	margin-top: 30px;
 }
 
 /* BUTTON ON HOME PAGE */
 
-.linkButtons,
-.linkButtons {
-	width: 200px;
+/* .getStartedButton {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
 	height: 50px;
-	margin: 5px auto 20px auto;
-	border-radius: 10px;
-	border: solid 2px #0a5503;
-	font-size: 25px;
-	text-align: center;
+	margin: 30px auto;
+	border-radius: 20px;
+	border: solid 2px #0e6506;
+	background-color: #0e6506;
+	font-size: 1rem;
 }
-
-/* .linkButtons:hover,
-.linkButtons button:hover {
+.getStartedButton:hover {
 	background-color: #b1f778e3;
 	color: #0a5503;
 } */
 
-/* .blueButton {
-	background-color: #1ac00b;
-	font-size: 1.2rem;
-} */
-
-/* */
-
-.username {
-	width: 100%;
-	text-align: center;
-	font-size: 50px;
-}
-
-.userDetails {
-	width: 90%;
+.buttonsContainer {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	justify-content: center;
-	margin: 0px 10px 30px 10px;
+	align-items: center;
+	width: 50%;
 }
 
-.userStats {
-	font-size: 28px;
-	font-family: "Nunito", sans-serif;
-	padding-top: 10px;
+.userButton {
+	width: 100%;
+	height: 45px;
+	padding: 0.7em 1.4em;
+	margin: 10px;
+	border-radius: 1em;
+	font-weight: bolder;
+	color: #ffffff;
+	background-color: #3369ff;
+	box-shadow: inset 0 -0.6em 0 -0.35em rgba(158, 141, 141, 0.17);
+	text-align: center;
 }
 
-.profilePic {
-	height: 200px;
-	padding: 20px;
+.userButton:hover {
+	background-color: #204abb;
 }
 
-/* CHART */
+.userIconBs {
+	margin-right: 5px;
+}
 
-.chart {
-	width: 60%;
-	margin-top: 5%;
-	margin-left: 20%;
-	margin-bottom: 10%;
+/* COHORTS PAGE */
+
+.cohortContainer {
+	display: grid;
+	grid-auto-flow: column;
+	width: 70%;
+	margin: auto;
+}
+
+.searchCohort {
+	width: 100%;
+	margin-bottom: 15px;
+}
+
+.dividerLine {
+	margin-top: 30px;
+	width: 100%;
+	border: solid 1px #b4b6b4;
+}
+
+.cohortTitle {
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+.cohortCardContainer {
+	margin: 20px auto 50px auto;
+	max-width: 75%;
+}
+
+.circularProgress {
+	margin: 100px auto;
 }
 
 /* CHANNELS PAGE */
@@ -131,7 +154,9 @@ body {
 
 .table {
 	margin: auto;
+	/* margin-top: 30px; */
 	width: 80%;
+	max-width: 80%;
 }
 
 .table th {
@@ -145,21 +170,41 @@ body {
 }
 
 .arrow {
-	width: 15px;
+	width: 10px;
 	height: auto;
 }
 
 /* TABLE ON SINGLE CHANNEL PAGE */
 
+.chanelTableContainer {
+	margin: 0px 20px 10px 20px;
+}
+
 .channelTable {
-	margin-top: 20px;
+	margin: 15px auto;
 }
 
 .thickBottomBorder {
 	border-bottom: solid 2px black;
 }
 
+/* CHARTS */
+
+.singleUserChart {
+	width: 80%;
+	height: 500px;
+	margin: 20px auto;
+}
+
+.singleChannelChart {
+	display: flex;
+	width: 70%;
+	margin: 15px auto;
+	padding-bottom: 30px;
+}
+
 /* SINGLE USER DATA */
+
 .red {
 	color: red;
 }
@@ -168,19 +213,60 @@ body {
 	color: green;
 }
 
+/* USERS */
+
+.username {
+	width: 100%;
+	text-align: center;
+	font-size: 50px;
+}
+
+.userDetails {
+	width: 90%;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	margin: 0px 10px 30px 10px;
+}
+
+.userStats {
+	font-size: 28px;
+	padding-top: 10px;
+}
+
+.profilePic {
+	height: 200px;
+	padding: 20px;
+}
+
 /* FOOTER */
 
-.footer {
+footer {
 	display: flex;
-	flex-direction: column;
-	text-align: center;
-	padding: 5px;
-	background-color: #080808;
-	margin-top: 1rem;
+	flex-direction: row;
+	justify-content: center;
 	position: fixed;
+	margin-top: 70px;
 	bottom: 0;
 	left: 0;
 	width: 100%;
+	z-index: 100000;
+}
+
+.myFooter {
+	text-align: center;
+	padding: 5px;
+	background-color: #080808;
+	color: rgb(219, 215, 215);
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	position: fixed;
+}
+
+.myFooter span {
+	font-family: "Varela Round", serif;
+	font-size: 8px;
 }
 
 /* DROPDOWN COMPONENT FOR FUTURE RELEASES */
@@ -191,3 +277,302 @@ body {
 	font-size: 25px;
 	text-align: center;
 } */
+
+/* MEDIA QUERIES */
+
+@media (min-width: 320px) {
+	/* smartphones, portrait iPhone, portrait 480x320 phones (Android) */
+
+	/* HOME PAGE */
+
+	.introMessage {
+		/* margin-top: 60px; */
+		padding: 25px 25px;
+	}
+
+	.introMessage h1 {
+		font-size: 18px;
+	}
+
+	.introMessage h2 {
+		font-size: 13px;
+	}
+
+	/* BUTTON ON HOME PAGE */
+
+	/* .getStartedButton {
+		margin-top: 40px;
+		width: 55%;
+		font-size: 1.1rem;
+	} */
+
+	.buttonsContainer {
+		width: 55%;
+	}
+
+	/* .userButton {
+		width: 95%;
+	} */
+}
+
+@media (min-width: 480px) {
+	/* smartphones, Android phones, landscape iPhone */
+
+	/* HOME PAGE */
+
+	.introMessage {
+		/* margin-top: 70px; */
+		padding: 27px;
+	}
+
+	.introMessage h1 {
+		font-size: 21px;
+	}
+
+	.introMessage h2 {
+		font-size: 16px;
+	}
+
+	/* BUTTON ON HOME PAGE */
+
+	/* .getStartedButton {
+		margin-top: 50px;
+		width: 60%;
+		font-size: 1.2rem;
+	} */
+
+	.buttonsContainer {
+		width: 60%;
+	}
+
+	/* .userButton {
+		width: 90%;
+	} */
+
+	.userIconBs {
+		margin-right: 10px;
+	}
+
+	/* TABLE ON CHANNELS PAGE */
+
+	.arrow {
+		width: 15px;
+		height: auto;
+	}
+
+	/* FOOTER */
+
+	.myFooter span {
+		font-size: 10px;
+	}
+}
+
+@media (min-width: 600px) {
+	/* portrait tablets, portrait iPad, e-readers (Nook/Kindle), landscape 800x480 phones (Android) */
+
+	/* HOME PAGE */
+
+	.introMessage {
+		/* margin-top: 80px; */
+		padding: 55px;
+	}
+
+	.introMessage h1 {
+		font-size: 23px;
+	}
+
+	.introMessage h2 {
+		font-size: 18px;
+	}
+
+	/* BUTTON ON HOME PAGE */
+
+	/* .getStartedButton {
+		margin-top: 60px;
+		font-size: 1.3rem;
+	} */
+
+	.buttonsContainer {
+		flex-direction: row;
+		width: 100%;
+	}
+
+	.userButton {
+		width: 90%;
+	}
+
+	/* CHARTS */
+
+	.singleUserChart {
+		width: 80%;
+		/* height: auto; */
+		margin: 20px auto;
+		padding-bottom: 30px;
+	}
+
+	/* FOOTER */
+
+	.myFooter span {
+		font-size: 12px;
+	}
+}
+
+@media (min-width: 801px) {
+	/* tablet, landscape iPad, lo-res laptops ands desktops */
+
+	/* HOME PAGE */
+
+	.introMessage {
+		/* margin-top: 90px; */
+		padding: 57px;
+	}
+
+	.introMessage h1 {
+		font-size: 25px;
+	}
+
+	.introMessage h2 {
+		font-size: 20px;
+	}
+
+	/* BUTTON ON HOME PAGE */
+
+	/* .getStartedButton {
+		margin-top: 70px;
+		font-size: 1.4rem;
+	} */
+
+	.buttonsContainer {
+		margin-top: 20px;
+	}
+
+	.userButton {
+		width: 95%;
+		margin: 25px;
+	}
+
+	.userIconBs {
+		margin-right: 20px;
+	}
+
+	/* FOOTER */
+
+	.myFooter span {
+		font-size: 14px;
+	}
+}
+
+@media (min-width: 1025px) {
+	/* big landscape tablets, laptops, and desktops */
+
+	/* HOME PAGE */
+
+	.introMessage {
+		/* margin-top: 100px; */
+		padding: 58px;
+	}
+
+	.introMessage h1 {
+		font-size: 27px;
+	}
+
+	.introMessage h2 {
+		font-size: 22px;
+	}
+
+	/* BUTTON ON HOME PAGE */
+
+	/* .getStartedButton {
+		margin-top: 80px;
+		font-size: 1.5rem;
+	} */
+
+	/* FOOTER */
+
+	.myFooter span {
+		font-size: 16px;
+	}
+}
+
+@media (min-width: 1281px) {
+	/* hi-res laptops and desktops */
+
+	/* HOME PAGE */
+
+	.introMessage {
+		/* margin-top: 110px; */
+		padding: 60px;
+	}
+
+	.introMessage h1 {
+		font-size: 29px;
+	}
+
+	.introMessage h2 {
+		font-size: 24px;
+	}
+
+	/* BUTTON ON HOME PAGE */
+
+	/* .getStartedButton {
+		margin-top: 90px;
+		font-size: 1.6rem;
+	} */
+
+	/* TABLE ON CHANNELS PAGE */
+
+	.table {
+		width: 50%;
+	}
+
+	/* CHARTS */
+
+	.singleUserChart {
+		width: 60%;
+		margin: 20px auto;
+	}
+
+	.singleChannelChart {
+		width: 60%;
+		margin: 15px auto;
+		padding-bottom: 50px;
+	}
+
+	/* FOOTER */
+
+	.myFooter span {
+		font-size: 18px;
+	}
+}
+
+@media (min-width: 1781px) {
+	/* extra large hi-res laptops and desktops */
+
+	/* HOME PAGE */
+
+	.introMessage {
+		/* margin-top: 120px; */
+		padding: 60px;
+	}
+
+	.introMessage h1 {
+		font-size: 31px;
+	}
+
+	.introMessage h2 {
+		font-size: 26px;
+	}
+
+	/* BUTTON ON HOME PAGE */
+
+	/* .getStartedButton {
+		margin-top: 100px;
+		font-size: 1.6rem;
+	} */
+
+	/* FOOTER */
+
+	.myFooter span {
+		font-size: 20px;
+	}
+}
