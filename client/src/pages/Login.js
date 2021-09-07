@@ -78,9 +78,7 @@ const Login = ({ setToken }) => {
 			password,
 		})
 			.then((result) => {
-				console.log(result.data);
 				setName(result.data.name);
-				console.log("data:", result.data);
 				dispatch(
 					login({
 						name: result.data.name,
@@ -91,12 +89,11 @@ const Login = ({ setToken }) => {
 				);
 				setToken("login");
 				const path =
-					role == 2
+					result.data.role == "2"
 						? "/cohorts"
-						: role == 1
+						: result.data.role == "1"
 						? `/channels/${result.data.userId}`
-						: "";
-				// TODO : add check for cohort or mentor
+						: "/";
 				!validEmail && history.push(path);
 			})
 			.catch(() => {
