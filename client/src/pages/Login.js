@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { login, selectUser } from "../features/userSlice";
 import axios from "axios";
-import "./Home.css";
 import { useHistory, Link, useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 import { Container, CssBaseline, TextField, Grid } from "@material-ui/core";
@@ -34,8 +33,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Login = ({ setToken }) => {
-	// const { roles } = useParams();
-	// console.log(roles);
 	const role = useLocation().pathname.split("/")[2];
 	Login.propTypes = {
 		setToken: PropTypes.func.isRequired,
@@ -43,11 +40,6 @@ const Login = ({ setToken }) => {
 	const classes = useStyles();
 	const user = useSelector(selectUser);
 	const history = useHistory();
-	async function loginUser(credentials) {
-		if (!validEmail) {
-			return axios.post(`/api/login`, credentials);
-		}
-	}
 	const [name, setName] = useState(" ");
 	const [password, setPassword] = useState("");
 	const [email, setEmail] = useState("");
@@ -64,6 +56,11 @@ const Login = ({ setToken }) => {
 			setValidEmail(true);
 		}
 	};
+	async function loginUser(credentials) {
+		if (!validEmail) {
+			return axios.post(`/api/login`, credentials);
+		}
+	}
 	const dispatch = useDispatch();
 	const handleClickSignUp = () => {
 		setToken("signUp");
@@ -76,9 +73,7 @@ const Login = ({ setToken }) => {
 			password,
 		})
 			.then((result) => {
-				console.log(result.data);
 				setName(result.data.name);
-				console.log("data:", result.data);
 				dispatch(
 					login({
 						name: result.data.name,
@@ -134,7 +129,6 @@ const Login = ({ setToken }) => {
 									fullWidth
 									id="email"
 									label="Email Address"
-									// floatingLabel
 									name="email"
 									autoComplete="none"
 									value={email}
@@ -153,7 +147,6 @@ const Login = ({ setToken }) => {
 								fullWidth
 								name="password"
 								label="Password"
-								// floatingLabel
 								type="password"
 								id="password"
 								autoComplete="current-password"

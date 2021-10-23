@@ -74,19 +74,18 @@ const SortableTable = ({ channelList }) => {
 
 	let path = "";
 
+	async function fetchChannelUser(rowId) {
+		axios.get(`/api/channelUser/${rowId}`);
+	}
+	async function fetchChannelSum(rowId) {
+		axios.get(`/api/channelSum/${rowId}`);
+	}
 	function handleClick(row) {
 		path =
 			role == "mentor"
 				? `/channel/${row.name}/${row.id}`
 				: `/user/${row.id}/${role}/${user.name}`;
-
-		fetch(`/api/channelUser/${row.id}`)
-			.then((res) => {
-				if (!res.ok) {
-					throw new Error(res.statusText);
-				}
-				return res.json();
-			})
+		fetchChannelUser(row.id)
 			.then((body) => {
 				setUserList(body);
 				setNumberOfUsers(body.length);
@@ -94,14 +93,8 @@ const SortableTable = ({ channelList }) => {
 			.catch((err) => {
 				console.error(err);
 			});
-		fetch(`/api/channelSum/${row.id}`)
-			.then((res) => {
-				if (!res.ok) {
-					throw new Error(res.statusText);
-				}
-				return res.json();
-			})
-			.then((body) => {
+		fetchChannelSum(row.id)
+			.then(() => {
 				let messagesArray = [];
 				let reactionsArray = [];
 				let lastTwoWeeks = body.slice(0, 2);
@@ -116,70 +109,103 @@ const SortableTable = ({ channelList }) => {
 			.catch((err) => {
 				console.error(err);
 			});
-
 		history.push(path);
+		// fetch(`/api/channelUser/${row.id}`)
+		// 	.then((res) => {
+		// 		if (!res.ok) {
+		// 			throw new Error(res.statusText);
+		// 		}
+		// 		return res.json();
+		// 	})
+		// 	.then((body) => {
+		// 		setUserList(body);
+		// 		setNumberOfUsers(body.length);
+		// 	})
+		// 	.catch((err) => {
+		// 		console.error(err);
+		// 	});
+		// fetch(`/api/channelSum/${row.id}`)
+		// 	.then((res) => {
+		// 		if (!res.ok) {
+		// 			throw new Error(res.statusText);
+		// 		}
+		// 		return res.json();
+		// 	})
+		// 	.then((body) => {
+		// 		let messagesArray = [];
+		// 		let reactionsArray = [];
+		// 		let lastTwoWeeks = body.slice(0, 2);
+		// 		lastTwoWeeks.forEach((element) => {
+		// 			messagesArray.push(element.total_message / numberOfUsers);
+		// 			reactionsArray.push(element.total_reaction / numberOfUsers);
+		// 		});
+		// 		setAverageMessages(messagesArray);
+		// 		setAverageReactions(reactionsArray);
+		// 		setChannelData(body.slice(0, 4));
+		// 	})
+		// 	.catch((err) => {
+		// 		console.error(err);
+		// 	});
 	}
 
 	return (
 		<div className="p-2 containerSlackChannels">
-			<Grid justify="center" className={selectedRow ? "selectedRow" : " "}>
-				<MaterialTable
-					onClick={rowSelected}
-					icons={tableIcons}
-					className={classes.table}
-					fontFamily="Varela Round"
-					title="Slack channels and members"
-					columns={[
-						{
-							title: "Channel",
-							field: "name",
-							headerStyle: {
-								backgroundColor: "#01579b",
-								lineHeight: "30px",
-								color: "#FFF",
-								fontWeight: "900",
-							},
-							// eslint-disable-next-line react/display-name
-							render: (row) => (
-								<Link
-									className={classes.removeButton}
-									aria-hidden="true"
-									onClick={() => handleClick(row)}
-									to={{
-										pathname: path,
-										state: {
-											channelData,
-											numberOfUsers,
-										},
-									}}
-								>
-									{row.name}
-								</Link>
-							),
-						},
-						{
-							title: "Users",
-							field: "num_members",
-							lineHeight: "30px",
-							headerStyle: {
-								backgroundColor: "#01579b",
-								color: "#FFF",
-								fontWeight: "900",
-							},
-						},
-					]}
-					data={channelList}
-					options={{
-						sorting: true,
+			<MaterialTable
+				onClick={rowSelected}
+				icons={tableIcons}
+				className={classes.table}
+				fontFamily="Varela Round"
+				title="Slack channels and members"
+				columns={[
+					{
+						title: "Channel",
+						field: "name",
 						headerStyle: {
 							backgroundColor: "#01579b",
-							color: "#01579b",
+							lineHeight: "30px",
+							color: "#FFF",
+							fontWeight: "900",
 						},
-						tableLayout: tableLayout,
-						emptyRowsWhenPaging: emptyRowsWhenPaging,
-					}}
-				/>
-			</Grid>
+						// eslint-disable-next-line react/display-name
+						render: (row) => (
+							<Link
+								className={classes.removeButton}
+								aria-hidden="true"
+								onClick={() => handleClick(row)}
+								to={{
+									pathname: path,
+									state: {
+										channelData,
+										numberOfUsers,
+									},
+								}}
+							>
+								{row.name}
+							</Link>
+						),
+					},
+					{
+						title: "Users",
+						field: "num_members",
+						lineHeight: "30px",
+						headerStyle: {
+							backgroundColor: "#01579b",
+							color: "#FFF",
+							fontWeight: "900",
+						},
+					},
+				]}
+				data={channelList}
+				options={{
+					sorting: true,
+					headerStyle: {
+						backgroundColor: "#01579b",
+						color: "#01579b",
+					},
+					tableLayout: tableLayout,
+					emptyRowsWhenPaging: emptyRowsWhenPaging,
+				}}
+			/>
 		</div>
 	);
 };

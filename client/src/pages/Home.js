@@ -16,9 +16,9 @@ const Home = ({ setToken }) => {
 				</h2>
 			</div>
 			<div className="buttonsContainer">
-				<HomeUserButtons content="ADMIN" setToken={setToken} />
-				<HomeUserButtons content="MENTOR" setToken={setToken} />
-				<HomeUserButtons content="TRAINEE" setToken={setToken} />
+				<HomeUserButtons content="Admin" setToken={setToken} />
+				<HomeUserButtons content="Mentor" setToken={setToken} />
+				<HomeUserButtons content="Trainee" setToken={setToken} />
 			</div>
 		</div>
 	);

@@ -9,7 +9,6 @@ const SingleUserData = ({
 	averageReactions,
 }) => {
 	const [userData, setUserData] = useState(null);
-	console.log("channelId", userId, channelId);
 	useEffect(() => {
 		fetch(`/api/userSum/${channelId}/${userId}`)
 			.then((res) => {
@@ -24,34 +23,34 @@ const SingleUserData = ({
 			.catch((err) => {
 				console.error(err);
 			});
-	}, [channelId, userData, userId]);
+	}, [channelId, userId]);
 
 	return userData && userData.length > 0 ? (
 		<>
 			<td
 				className={
-					userData[1].total_message < averageMessages[0] ? "red" : "green"
+					userData[1].total_message <= averageMessages[0] ? "red" : "green"
 				}
 			>
 				{userData[1].total_message}
 			</td>
 			<td
 				className={
-					userData[1].total_reaction < averageReactions[0] ? "red" : "green"
+					userData[1].total_reaction <= averageReactions[0] ? "red" : "green"
 				}
 			>
 				{userData[1].total_reaction}
 			</td>
 			<td
 				className={
-					userData[0].total_message < averageMessages[1] ? "red" : "green"
+					userData[0].total_message <= averageMessages[1] ? "red" : "green"
 				}
 			>
 				{userData[0].total_message}
 			</td>
 			<td
 				className={
-					userData[0].total_reaction < averageReactions[1] ? "red" : "green"
+					userData[0].total_reaction <= averageReactions[1] ? "red" : "green"
 				}
 			>
 				{userData[0].total_reaction}

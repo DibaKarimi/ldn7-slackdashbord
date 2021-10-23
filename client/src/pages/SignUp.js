@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
-import { selectUser } from "../features/userSlice";
 import axios from "axios";
 import { useLocation, useHistory, Link } from "react-router-dom";
 import { Container, CssBaseline, TextField, Grid } from "@material-ui/core";
@@ -9,7 +7,7 @@ import { Avatar, Typography } from "@material-ui/core";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { makeStyles } from "@material-ui/core/styles";
 import { deepOrange } from "@material-ui/core/colors";
-import PopUpMessage from "../components/PopUpMessage";
+import Button from "@material-ui/core/Button";
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
@@ -41,20 +39,14 @@ const SignUp = ({ setToken }) => {
 	};
 
 	const role = useLocation().pathname.split("/")[2];
-	const user = useSelector(selectUser);
 	const history = useHistory();
-
-	async function SignUpUser(credentials) {
-		if (!validEmail) {
-			return axios.post(`/api/signUp`, credentials);
-		}
-	}
 
 	const [name, setName] = useState(" ");
 	const [userId, setUserId] = useState(role == 2 ? "mentor" : "");
 	const [email, setEmail] = useState(" ");
 	const [password, setPassword] = useState("");
 	const [validEmail, setValidEmail] = useState(false);
+
 	const isValidEmail = (email) => {
 		const result = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
 		return result;
@@ -74,13 +66,11 @@ const SignUp = ({ setToken }) => {
 		history.push(`/login/${role}`);
 	};
 
-	const resetForm = () => {
-		setName("");
-		setUserId("");
-		setEmail("");
-		setPassword("");
-	};
-
+	async function SignUpUser(credentials) {
+		if (!validEmail) {
+			return axios.post(`/api/signUp`, credentials);
+		}
+	}
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		SignUpUser({
@@ -91,8 +81,6 @@ const SignUp = ({ setToken }) => {
 		})
 			.then((result) => {
 				setToken(false);
-				// const path =
-				// 	role == 2 ? "/cohorts" : role == 1 ? `/channels/${userId}` : "";
 				const isSuccess = result.data.message == "Done" && !validEmail;
 				isSuccess && history.push("/Home");
 			})
@@ -168,7 +156,7 @@ const SignUp = ({ setToken }) => {
 								required
 								fullWidth
 								name="password"
-								// value={password}
+								value={password}
 								label="Password"
 								floatingLabel
 								type="password"
@@ -178,7 +166,15 @@ const SignUp = ({ setToken }) => {
 							/>
 						</Grid>
 					</Grid>
-					<PopUpMessage resetForm={resetForm} />
+					<Button
+						type="submit"
+						fullWidth
+						variant="contained"
+						color="primary"
+						className={classes.submit}
+					>
+						Sign Up
+					</Button>
 					<Grid container justifyContent="flex-end">
 						<Grid item>
 							<Link variant="body2" onClick={handleClickLogin}>

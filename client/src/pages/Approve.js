@@ -48,43 +48,9 @@ const Approve = () => {
 	const classes = useStyles();
 	const [changes, setChanges] = useState([]);
 	const [tableData, setTableData] = useState([]);
-
 	const [status, setStatus] = useState("0");
-
-	const handleChange = (value, rowData) => {
-		setStatus(value);
-		const tempData = tableData;
-		const index = rowData.tableData.id;
-		tempData[index].status = value;
-		setTableData(tempData);
-		const newChange = {
-			id: index,
-			email: rowData.email,
-			status: rowData.status,
-		};
-		changes.push(newChange);
-	};
-	async function updateStatus(credentials) {
-		return axios.put(`/api/approve`, credentials);
-	}
-	const handleClickSave = (event, rowData) => {
-		const change = changes.find(
-			(element) => element.id == rowData.tableData.id
-		);
-
-		const email = change.email;
-		const status = change.status;
-
-		updateStatus({ email, status })
-			.then((result) => {
-				alert(`The new status is saved for ${rowData.user_name}`);
-			})
-			.catch(() => {});
-
-		// alert("You saved status of" + rowData.status);
-	};
 	useEffect(() => {
-		fetch(`/api/request`)
+		fetch(`/api/registrationList`)
 			.then((res) => {
 				if (!res.ok) {
 					throw new Error(res.statusText);
@@ -98,6 +64,28 @@ const Approve = () => {
 				console.error(err);
 			});
 	}, []);
+	const handleChange = (value, rowData) => {
+		setStatus(value);
+		const tempData = tableData;
+		const index = rowData.tableData.id;
+		tempData[index].status = value;
+		setTableData(tempData);
+	};
+	async function updateStatus(credentials) {
+		return axios.put(`/api/approve`, credentials);
+	}
+	const handleClickSave = (event, rowData) => {
+		const email = rowData.email;
+		const status = rowData.status;
+		updateStatus({ email, status })
+			.then((result) => {
+				alert(`The new status is saved for ${rowData.user_name}`);
+			})
+			.catch((err) => {
+				console.error(err);
+			});
+	};
+
 	return (
 		<div className="container pt-5">
 			<MaterialTable

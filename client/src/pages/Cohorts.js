@@ -5,7 +5,6 @@ import CohortSearchField from "../components/CohortSearchField";
 import CohortCard from "../components/CohortCard";
 import slack_logo from "../images/slack_logo.png";
 import "./Home.css";
-// import mockCohortList from "../data/fakeData.json";
 
 const Cohorts = () => {
 	// const [cohortList, setCohortList] = useState(mockCohortList);

@@ -23,12 +23,9 @@ const loginRequired = (req, res, next) => {
 
 router.post("/login", (req, res) => {
 	const { email = "", password = "" } = req.body;
-	//const user = users.find((user) => user.password === password);
-	const isLogin = password === process.env.LOGIN_PASS;
 	if (!(email && password)) {
 		return res.status(400).send({ error: "Data not formatted properly" });
 	}
-	//const isLogin = password === process.env.LOGIN_PASS;
 	const query = `select * from users where email='${email}' and status='3' `;
 	pool.query(query, async (db_err, db_res) => {
 		if (db_err) {
@@ -55,8 +52,8 @@ router.post("/login", (req, res) => {
 	});
 });
 
-router.get("/request", (req, res) => {
-	const query = `select user_id,user_name,role,email,status from users where user_id!='Admin' order by status asc`;
+router.get("/registrationList", loginRequired, (req, res) => {
+	const query = `select user_id,user_name,role,email,status from users where role!='3' order by status asc`;
 	pool.query(query, (db_err, db_res) => {
 		if (db_err) {
 			res.send(JSON.stringify(db_err));
@@ -66,7 +63,7 @@ router.get("/request", (req, res) => {
 	});
 });
 
-router.put("/approve", (req, res) => {
+router.put("/approve", loginRequired, (req, res) => {
 	const { email = "", status = "" } = req.body;
 	const query = ` update users set status='${status}' where email='${email}';`;
 	pool.query(query, (db_err, db_res) => {
@@ -80,7 +77,6 @@ router.put("/approve", (req, res) => {
 
 router.post("/signUp", async (req, res) => {
 	const { name = "", userId = "", email = "", password = "" } = req.body;
-	console.log("name", name, "userId:", userId, password, email);
 	if (!(name && password && email && userId)) {
 		return res.status(400).send({ error: "Data not formatted properly" });
 	}
@@ -101,8 +97,6 @@ router.post("/signUp", async (req, res) => {
 						if (db_err) {
 							res.status(400).send(JSON.stringify(db_err));
 						} else {
-							req.session.userId = name;
-							users.push(name);
 							res.json({ message: "Done" });
 						}
 					});
@@ -125,8 +119,6 @@ router.post("/signUp", async (req, res) => {
 							res.status(400).send(JSON.stringify(db_err));
 						} else {
 							req.session.userId = name;
-							users.push(name);
-							console.log("session", req.session.userId, "name", users);
 							res.json({ message: "Done" });
 						}
 					});
@@ -238,7 +230,7 @@ router.get("/userList", loginRequired, async (req, res) => {
 
 const fetchAllData = async (startDate) => {
 	const channelList = await getChannelList();
-	console.log("fetchAllData", channelList);
+	// console.log("fetchAllData", channelList);
 	const result = channelList.channels.map(async (channel) => {
 		const channelId = channel.id;
 		const data = await getChannelHistory(channel.id, startDate, " ");
@@ -266,7 +258,7 @@ const fetchAllData = async (startDate) => {
 	return Promise.all(result);
 };
 
-router.post("/dailyStatistic", async (req, res) => {
+router.post("/dailyStatistic", loginRequired, async (req, res) => {
 	const startDateString = req.query.date || new Date();
 	const numberOfDays = req.query.days || 1;
 	let startDate =
@@ -275,8 +267,7 @@ router.post("/dailyStatistic", async (req, res) => {
 				new Date(startDateString) - 60 * 60 * 24 * numberOfDays * 1000
 			).setHours(0, 0, 0, 0)
 		) / 1000;
-	const messageInfo = await fetchAllData(startDate); // All Data/messages for 3 weeks (unsorted)
-	// console.log(messageInfo);
+	const messageInfo = await fetchAllData(startDate); // All Data (unsorted)
 	const reactionData = FetchReactionData(messageInfo); // reactions (unsorted)
 	messageInfo.push(reactionData); // messages + reaction (unsorted)
 	const info = [].concat.apply([], messageInfo); // messages + reaction (sorted)
@@ -286,7 +277,6 @@ router.post("/dailyStatistic", async (req, res) => {
 	messageInfo.push(repliesMessagesSorted);
 	messageInfo.push(repliesReaction);
 	const result = [].concat.apply([], messageInfo); // messages + reactions + repliesMessages + repliesReactions
-	// console.log(result);
 	const aggregateStat = await aggregateData(result, numberOfDays);
 	const stat = [].concat.apply([], [].concat.apply([], aggregateStat));
 	insertDataToTable(stat);
@@ -498,12 +488,12 @@ router.get("/channelSum/:channelId", loginRequired, (req, res) => {
 	});
 });
 
-router.get("/userSum/:channelId/:userId", (req, res) => {
+router.get("/userSum/:channelId/:userId", loginRequired, (req, res) => {
 	const channelId = req.params.channelId;
 	const userId = req.params.userId;
 
 	const query = `SELECT DATE_PART('week', date) week_no, channel_id, user_id, SUM(message_count) AS total_message, SUM(reaction_count) AS total_reaction FROM messages WHERE channel_id = '${channelId}' AND user_id = '${userId}'  GROUP BY user_id, channel_id, week_no ORDER by week_no DESC`;
-	console.log(query);
+	// console.log(query);
 	pool.query(query, (db_err, db_res) => {
 		if (db_err) {
 			res.send(JSON.stringify(db_err));

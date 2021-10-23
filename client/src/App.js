@@ -22,7 +22,6 @@ const theme = createMuiTheme({
 
 const App = () => {
 	const [token, setToken] = useState(false);
-	console.log(token);
 	if (!token) return <Home setToken={setToken} />;
 	else if (token == "logout") return <Logout setToken={setToken} />;
 	else if (token == "Home") return <Login setToken={setToken} />;
